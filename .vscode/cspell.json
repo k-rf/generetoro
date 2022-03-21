@@ -2,5 +2,15 @@
   "version": "0.2",
   "gitignoreRoot": [".."],
   "ignorePaths": ["/.devcontainer/", "/node_modules/"],
-  "words": ["esbuild", "generetro", "linebreak", "nestjs", "Parens", "prebuild", "Prettierrc"]
+  "words": [
+    "esbuild",
+    "generetro",
+    "linebreak",
+    "nestjs",
+    "notionhq",
+    "Parens",
+    "prebuild",
+    "Prettierrc",
+    "usecase"
+  ]
 }
