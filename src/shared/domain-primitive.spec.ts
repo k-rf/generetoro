@@ -1,10 +1,7 @@
-import { DomainPrimitive } from "./domain-primitive";
+import { DomainPrimitive, Primitive } from "./domain-primitive";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type T = string | number | Date | DomainPrimitive<any> | Record<string, DomainPrimitive<any>>;
-
-class TestValueObject extends DomainPrimitive<T, "TestValueObject"> {
-  protected validate(value: T): T {
+class TestValueObject extends DomainPrimitive<Primitive, "TestValueObject"> {
+  protected validate(value: Primitive): Primitive {
     return value;
   }
 }
@@ -29,6 +26,16 @@ describe("DomainPrimitive", () => {
       ["abc", "xyz", false],
       [new Date(0), new Date(0), true],
       [new Date(0), new Date(1), false],
+      [
+        new TestValueObject([new TestValueObject(0), new TestValueObject(1)]),
+        new TestValueObject([new TestValueObject(0), new TestValueObject(1)]),
+        true,
+      ],
+      [
+        new TestValueObject([new TestValueObject(0), new TestValueObject(1)]),
+        new TestValueObject([new TestValueObject(1), new TestValueObject(0)]),
+        false,
+      ],
       [new TestValueObject(0), new TestValueObject(0), true],
       [new TestValueObject(0), new TestValueObject(1), false],
       [new TestValueObject("abc"), new TestValueObject("abc"), true],
