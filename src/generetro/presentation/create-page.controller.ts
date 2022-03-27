@@ -10,9 +10,10 @@ export class CreatePageController {
 
   @Post()
   async handle() {
-    const input = new CreatePageInput({
-      today: new Date(),
-    });
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+
+    const input = new CreatePageInput({ today });
 
     await this.service.handle(input);
   }
