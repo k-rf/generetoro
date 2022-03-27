@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { DomainPrimitive } from "./domain-primitive";
+import { DomainPrimitive, Primitive } from "./domain-primitive";
 import { Uuid } from "./uuid";
 
-type Key<T> = T extends Record<string, DomainPrimitive<any>> ? keyof T : never;
+type Key<T> = T extends Record<string, DomainPrimitive<Primitive>> ? keyof T : never;
 
 export abstract class Entity<
-  T extends Record<"id", Uuid<string>> & Record<string, DomainPrimitive<any>>,
+  T extends Record<"id", Uuid<string>> & Record<string, DomainPrimitive<Primitive>>,
   U extends string
 > {
   private entityBrand!: U;
