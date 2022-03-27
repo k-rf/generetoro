@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Client as NotionClient } from "@notionhq/client";
 
 import { EnvService } from "./env.service";
+import { EnvironmentVariables } from "./env.validation";
 
 @Injectable()
 export class NotionService {
@@ -11,7 +12,7 @@ export class NotionService {
     return new NotionClient({ auth: this.envService.get("NOTION_KEY") });
   }
 
-  getDatabaseId() {
-    return this.envService.get("NOTION_DATABASE_ID");
+  get(key: keyof Omit<EnvironmentVariables, "NOTION_KEY">) {
+    return this.envService.get(key);
   }
 }
