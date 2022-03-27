@@ -1,7 +1,9 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { APP_FILTER } from "@nestjs/core";
 
-import { CreatePageController } from "./generetro/presentation/create-page.controller";
+import { AllExceptionsFilter } from "./filter/exception.filter";
+import { GeneretroModule } from "./generetro/generetro.module";
 import { validate } from "./lib/env.validation";
 import { LibModule } from "./lib/lib.module";
 
@@ -10,12 +12,17 @@ import { LibModule } from "./lib/lib.module";
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [".env.local"],
-      ignoreEnvVars: true,
       validate,
     }),
+    GeneretroModule,
     LibModule,
   ],
-  controllers: [CreatePageController],
-  providers: [],
+  controllers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
