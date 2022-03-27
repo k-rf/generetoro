@@ -20,6 +20,8 @@ services:
     working_dir: ${WORKSPACES}
     user: ${REMOTE_USER}
     tty: true
+    ports:
+      - 3000:3000
     volumes:
       - type: bind
         source: .
