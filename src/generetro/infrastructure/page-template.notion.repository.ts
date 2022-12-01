@@ -22,6 +22,7 @@ export class PageTemplateNotionRepository implements PageTemplateRepository {
       result.results.map((e) => {
         const block = Object(e);
 
+        // TODO: テーブルを参照できるようにする
         if (block.type === "heading_3") {
           return new Heading(block.heading_3.rich_text[0].plain_text);
         } else {

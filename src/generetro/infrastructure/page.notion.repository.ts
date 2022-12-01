@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { NotionService } from "~/lib/notion.service";
 
 import { Page } from "../core/domain/page";
+import { EmptyLine } from "../core/domain/page-content/empty-line";
 import { Heading } from "../core/domain/page-content/heading";
 import { PageId } from "../core/domain/page-id";
 import { PageRepository } from "../core/port/repository/page.repository";
@@ -32,18 +33,15 @@ export class PageNotionRepository implements PageRepository {
             },
           ],
         },
-        [this.notionService.get("NOTION_REMIND_COLUMN")]: {
+        リマインド: {
           date: { start: value.valueOf("remind").valueOf().toISOString(), time_zone: "Asia/Tokyo" },
         },
-        [this.notionService.get("NOTION_TAG_COLUMN")]: {
+        タグ: {
           select: {
-            name:
-              value.valueOf("type").valueOf() === "Daily"
-                ? this.notionService.get("NOTION_TAG_DAILY")
-                : this.notionService.get("NOTION_TAG_WEEKLY"),
+            name: value.valueOf("type").valueOf() === "Daily" ? "日次" : "週次",
           },
         },
-        [this.notionService.get("NOTION_ELEMENT_COLUMN")]: {
+        構成要素: {
           relation:
             value
               .valueOf("relations")
@@ -59,7 +57,10 @@ export class PageNotionRepository implements PageRepository {
 
           if (e instanceof Heading) {
             return { heading_3: content };
+          } else if (e instanceof EmptyLine) {
+            return { paragraph: content };
           } else {
+            // TODO: データベースを保存できるようにする
             return { paragraph: content };
           }
         }),
