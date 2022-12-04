@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { BlockObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 import { NotionService } from "~/lib/notion.service";
 
@@ -20,13 +21,13 @@ export class PageTemplateNotionRepository implements PageTemplateRepository {
 
     const content = new PageContent(
       result.results.map((e) => {
-        const block = Object(e);
+        const block = e as BlockObjectResponse;
 
-        // TODO: テーブルを参照できるようにする
-        if (block.type === "heading_3") {
-          return new Heading(block.heading_3.rich_text[0].plain_text);
-        } else {
-          return new EmptyLine();
+        switch (block.type) {
+          case "heading_3":
+            return new Heading(block.heading_3.rich_text[0].plain_text);
+          default:
+            return new EmptyLine();
         }
       })
     );

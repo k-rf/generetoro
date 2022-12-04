@@ -60,7 +60,6 @@ export class PageNotionRepository implements PageRepository {
           } else if (e instanceof EmptyLine) {
             return { paragraph: content };
           } else {
-            // TODO: データベースを保存できるようにする
             return { paragraph: content };
           }
         }),

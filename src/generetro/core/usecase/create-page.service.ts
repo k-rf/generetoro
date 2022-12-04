@@ -6,6 +6,7 @@ import { isMonday } from "~/util/is-monday";
 import { range } from "~/util/range";
 
 import { Page } from "../domain/page";
+import { PageContent } from "../domain/page-content/page-content";
 import { PageRelations } from "../domain/page-relations";
 import { PageTemplateId } from "../domain/page-template/page-template-id";
 import { PageTitle } from "../domain/page-title/page-title";
@@ -31,14 +32,9 @@ export class CreatePageService implements CreatePageUsecase {
       throw new UsecaseError("月曜日ではありません");
     }
 
-    const [dailyTemplate, weeklyTemplate] = await Promise.all([
-      this.pageTemplateRepository.findById(
-        new PageTemplateId(this.notionService.get("NOTION_TEMPLATE_DAILY_ID"))
-      ),
-      this.pageTemplateRepository.findById(
-        new PageTemplateId(this.notionService.get("NOTION_TEMPLATE_WEEKLY_ID"))
-      ),
-    ]);
+    const weeklyTemplate = await this.pageTemplateRepository.findById(
+      new PageTemplateId(this.notionService.get("NOTION_TEMPLATE_WEEKLY_ID"))
+    );
 
     const monday = new Date(input.valueOf("today"));
     monday.setHours(23, 0, 0, 0);
@@ -51,7 +47,7 @@ export class CreatePageService implements CreatePageUsecase {
       date.setDate(date.getDate() + diff);
 
       return new Page({
-        content: dailyTemplate.valueOf("content"),
+        content: new PageContent([]), // REF: ADR 2.
         remind: new RemindDate(date),
         title: new PageTitle({ start: new TitleStartDate(date) }),
         type: new RetroType(RETRO_TYPE.Daily),

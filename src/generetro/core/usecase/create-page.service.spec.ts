@@ -7,6 +7,7 @@ import { PageInMemoryRepository } from "~/generetro/infrastructure/page.in-memor
 import { NotionService } from "~/lib/notion.service";
 import { range } from "~/util/range";
 
+import { Heading } from "../domain/page-content/heading";
 import { PageContent } from "../domain/page-content/page-content";
 import { PageTemplate } from "../domain/page-template/page-template";
 import { PageTemplateId } from "../domain/page-template/page-template-id";
@@ -26,6 +27,9 @@ describe("CreatePageService", () => {
   let notionService: NotionService;
 
   beforeAll(async () => {
+    // 初期化
+    // -------------------------------------------------------------------------
+
     app = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -36,34 +40,55 @@ describe("CreatePageService", () => {
 
     notionService = app.get(NotionService);
 
+    await app.init();
+
+    // データ準備
+    // -------------------------------------------------------------------------
+
     const dailyId = notionService.get("NOTION_TEMPLATE_DAILY_ID");
     const weeklyId = notionService.get("NOTION_TEMPLATE_WEEKLY_ID");
 
     pageTemplateRepository.value.push(
-      new PageTemplate({ id: new PageTemplateId(dailyId), content: new PageContent([]) }),
-      new PageTemplate({ id: new PageTemplateId(weeklyId), content: new PageContent([]) })
-    );
-
-    await app.init();
-  });
-
-  it("1週間分のページを追加する（月曜日にだけ動作する）", async () => {
-    await Promise.all(
-      [...range(1, 7)].map(async (e) => {
-        const input = new CreatePageInput({
-          today: new Date(2022, 4, e),
-        });
-
-        try {
-          await service.handle(input);
-        } catch (e) {
-          expect(() => {
-            throw e;
-          }).toThrow(UsecaseError);
-        }
+      new PageTemplate({
+        id: new PageTemplateId(dailyId),
+        content: new PageContent([new Heading("Daily Template")]),
+      }),
+      new PageTemplate({
+        id: new PageTemplateId(weeklyId),
+        content: new PageContent([new Heading("Weekly Template")]),
       })
     );
+  });
 
-    expect(pageRepository.value.length).toStrictEqual(8);
+  describe("1 週間分のページを追加する（月曜日にだけ動作する）", () => {
+    beforeAll(async () => {
+      await Promise.all(
+        [...range(1, 7)].map(async (e) => {
+          const input = new CreatePageInput({
+            today: new Date(2022, 4, e),
+          });
+
+          try {
+            await service.handle(input);
+          } catch (e) {
+            expect(() => {
+              throw e;
+            }).toThrow(UsecaseError);
+          }
+        })
+      );
+    });
+
+    it("日次 7 件、週次 1 件の合計 8 件のページが作成される", () => {
+      expect(pageRepository.value.length).toStrictEqual(8);
+    });
+
+    it("日次ページのコンテンツは空である", () => {
+      const dailies = pageRepository.value.filter((e) => e.valueOf("type").isDaily());
+
+      dailies.forEach((e) => {
+        expect(e.valueOf("content").isEmpty()).toStrictEqual(true);
+      });
+    });
   });
 });
