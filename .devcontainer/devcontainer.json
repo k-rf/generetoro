@@ -7,21 +7,22 @@
   "workspaceFolder": "/workspaces",
   "overrideCommand": true,
   "extensions": [
-    "extr0py.vscode-relative-line-numbers",
-    "mutantdino.resourcemonitor",
-    "eamodio.gitlens",
-    "mhutchie.git-graph",
-    "esbenp.prettier-vscode",
+    "AbhijoyBasak.nestjs-files",
     "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "extr0py.vscode-relative-line-numbers",
+    "Gruntfuggly.todo-tree",
     "hbenl.vscode-test-explorer",
-    "kavod-io.vscode-jest-test-adapter",
     "irongeek.vscode-env",
-    "streetsidesoftware.code-spell-checker",
-    "AbhijoyBasak.nestjs-files"
+    "kavod-io.vscode-jest-test-adapter",
+    "mhutchie.git-graph",
+    "mutantdino.resourcemonitor",
+    "streetsidesoftware.code-spell-checker"
   ],
   "settings": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSaveMode": "modifications",
+    "editor.formatOnSaveMode": "file",
     "editor.codeActionsOnSave": {
       "source.fixAll": true
     }
